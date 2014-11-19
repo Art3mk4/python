@@ -1,0 +1,926 @@
+
+-- MySQL 2 PostgreSQL dump
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = off;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+-- Table: accounts
+DROP TABLE IF EXISTS "accounts" CASCADE;
+CREATE TABLE "accounts" (
+  "name" character varying(255) DEFAULT ''::character varying NOT NULL,
+  "status" character varying(255),
+  "schedule_status" integer NOT NULL,
+  "company_id" integer,
+  "password" character varying(255),
+  "server" character varying(255)
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS clone_records_id_seq CASCADE;
+CREATE SEQUENCE clone_records_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('clone_records_id_seq', 1, true);
+
+-- Table: clone_records
+DROP TABLE IF EXISTS "clone_records" CASCADE;
+CREATE TABLE "clone_records" (
+  "id" integer DEFAULT nextval('clone_records_id_seq'::regclass) NOT NULL,
+  "created" integer,
+  "modified" integer,
+  "uid" character varying(255),
+  "modelName" character varying(255),
+  "cloneId" integer,
+  "origId" integer
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS companies_id_seq CASCADE;
+CREATE SEQUENCE companies_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('companies_id_seq', 3, true);
+
+-- Table: companies
+DROP TABLE IF EXISTS "companies" CASCADE;
+CREATE TABLE "companies" (
+  "id" integer DEFAULT nextval('companies_id_seq'::regclass) NOT NULL,
+  "title" character varying(255),
+  "base_id" character varying(255),
+  "sort" integer NOT NULL,
+  "published" integer NOT NULL,
+  "scheduler_active" integer NOT NULL,
+  "key" character varying(255)
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS group_roles_id_seq CASCADE;
+CREATE SEQUENCE group_roles_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('group_roles_id_seq', 1, true);
+
+-- Table: group_roles
+DROP TABLE IF EXISTS "group_roles" CASCADE;
+CREATE TABLE "group_roles" (
+  "id" integer DEFAULT nextval('group_roles_id_seq'::regclass) NOT NULL,
+  "group_id" integer NOT NULL,
+  "role_id" integer NOT NULL
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS group_users_id_seq CASCADE;
+CREATE SEQUENCE group_users_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('group_users_id_seq', 4, true);
+
+-- Table: group_users
+DROP TABLE IF EXISTS "group_users" CASCADE;
+CREATE TABLE "group_users" (
+  "id" integer DEFAULT nextval('group_users_id_seq'::regclass) NOT NULL,
+  "group_id" integer NOT NULL,
+  "user_id" integer NOT NULL
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS groups_id_seq CASCADE;
+CREATE SEQUENCE groups_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('groups_id_seq', 1, true);
+
+-- Table: groups
+DROP TABLE IF EXISTS "groups" CASCADE;
+CREATE TABLE "groups" (
+  "id" integer DEFAULT nextval('groups_id_seq'::regclass) NOT NULL,
+  "title" character varying(255),
+  "company_id" integer,
+  "sort" integer NOT NULL,
+  "published" integer NOT NULL
+)
+WITHOUT OIDS;
+
+-- Table: handler_classes
+DROP TABLE IF EXISTS "handler_classes" CASCADE;
+CREATE TABLE "handler_classes" (
+  "title" character varying(255),
+  "class_name" character varying(255) DEFAULT ''::character varying NOT NULL,
+  "desc" character varying(255),
+  "options" text,
+  "defaults" text,
+  "created" integer NOT NULL,
+  "modified" integer NOT NULL,
+  "general" integer NOT NULL
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS notices_id_seq CASCADE;
+CREATE SEQUENCE notices_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('notices_id_seq', 1, true);
+
+-- Table: notices
+DROP TABLE IF EXISTS "notices" CASCADE;
+CREATE TABLE "notices" (
+  "id" integer DEFAULT nextval('notices_id_seq'::regclass) NOT NULL,
+  "author_type" integer,
+  "author_id" integer,
+  "user_id" integer,
+  "message" text,
+  "created" integer,
+  "modified" integer,
+  "sort" integer NOT NULL,
+  "notice_level" integer,
+  "readed" integer NOT NULL,
+  "readedTime" integer
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS operators_id_seq CASCADE;
+CREATE SEQUENCE operators_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('operators_id_seq', 216, true);
+
+-- Table: operators
+DROP TABLE IF EXISTS "operators" CASCADE;
+CREATE TABLE "operators" (
+  "id" integer DEFAULT nextval('operators_id_seq'::regclass) NOT NULL,
+  "sort" integer,
+  "published" integer NOT NULL,
+  "created" integer,
+  "modified" integer,
+  "name" character varying(255),
+  "surname" character varying(255),
+  "patronymic" character varying(255),
+  "login" character varying(255),
+  "password" character varying(255),
+  "desc" text,
+  "account_name" character varying(255),
+  "use_webrtc" integer NOT NULL,
+  "poll_template_id" integer NOT NULL,
+  "emulate" integer NOT NULL,
+  "company_id" integer,
+  "operator_group_id" integer,
+  "phone" character varying(255),
+  "ip" character varying(255),
+  "session_id" character varying(255)
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS providers_id_seq CASCADE;
+CREATE SEQUENCE providers_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('providers_id_seq', 3, true);
+
+-- Table: providers
+DROP TABLE IF EXISTS "providers" CASCADE;
+CREATE TABLE "providers" (
+  "id" integer DEFAULT nextval('providers_id_seq'::regclass) NOT NULL,
+  "title" character varying(255),
+  "company_id" integer,
+  "desc" text,
+  "created" integer,
+  "modified" integer
+)
+WITHOUT OIDS;
+
+-- Table: tbl_migration
+DROP TABLE IF EXISTS "tbl_migration" CASCADE;
+CREATE TABLE "tbl_migration" (
+  "version" character varying(255) NOT NULL,
+  "apply_time" integer,
+  "module" character varying(32)
+)
+WITHOUT OIDS;
+
+DROP SEQUENCE IF EXISTS users_id_seq CASCADE;
+CREATE SEQUENCE users_id_seq INCREMENT BY 1
+                                  NO MAXVALUE NO MINVALUE CACHE 1;
+SELECT pg_catalog.setval('users_id_seq', 3, true);
+
+-- Table: users
+DROP TABLE IF EXISTS "users" CASCADE;
+CREATE TABLE "users" (
+  "id" integer DEFAULT nextval('users_id_seq'::regclass) NOT NULL,
+  "sort" integer,
+  "published" integer NOT NULL,
+  "created" integer,
+  "modified" integer,
+  "login" character varying(512),
+  "fullname" character varying(512),
+  "phone" character varying(512),
+  "desc" character varying(512),
+  "password" character varying(512),
+  "company_id" integer NOT NULL,
+  "admin" integer,
+  "subscribe" integer NOT NULL,
+  "admin_company" integer NOT NULL
+)
+WITHOUT OIDS;
+
+--
+-- Data for Name: accounts; Type: TABLE DATA;
+--
+
+COPY "accounts" ("name", "status", "schedule_status", "company_id", "password", "server") FROM stdin;
+sdfsd	avail	1	2	123	192.168.98.149
+sip_user_1	avail	0	2	123	192.168.98.147
+sip_user_10	avail	0	2	123	192.168.98.149
+sip_user_100	avail	0	2	123	192.168.98.149
+sip_user_101	avail	0	2	123	192.168.98.147
+sip_user_102	avail	0	2	123	192.168.98.147
+sip_user_103	avail	0	2	123	192.168.98.147
+sip_user_104	avail	0	2	123	192.168.98.147
+sip_user_105	avail	0	2	123	192.168.98.147
+sip_user_106	avail	0	2	123	192.168.98.147
+sip_user_107	avail	0	2	123	192.168.98.147
+sip_user_108	avail	0	2	123	192.168.98.147
+sip_user_109	avail	0	2	123	192.168.98.147
+sip_user_11	avail	0	2	123	192.168.98.149
+sip_user_110	avail	0	2	123	192.168.98.147
+sip_user_111	avail	0	2	123	192.168.98.149
+sip_user_112	avail	0	2	123	192.168.98.147
+sip_user_113	avail	0	2	123	192.168.98.147
+sip_user_114	avail	0	2	123	192.168.98.147
+sip_user_115	avail	0	2	123	192.168.98.147
+sip_user_116	avail	0	2	123	192.168.98.147
+sip_user_117	avail	0	2	123	192.168.98.147
+sip_user_118	avail	0	2	123	192.168.98.147
+sip_user_119	avail	0	2	123	192.168.98.147
+sip_user_12	avail	0	2	123	192.168.98.149
+sip_user_120	avail	0	2	123	192.168.98.147
+sip_user_121	avail	0	2	123	192.168.98.147
+sip_user_122	avail	0	2	123	192.168.98.147
+sip_user_123	avail	0	2	123	192.168.98.149
+sip_user_124	avail	0	2	123	192.168.98.147
+sip_user_125	avail	0	2	123	192.168.98.147
+sip_user_126	avail	0	2	123	192.168.98.147
+sip_user_127	avail	0	2	123	192.168.98.147
+sip_user_128	avail	0	2	123	192.168.98.147
+sip_user_129	avail	0	2	123	192.168.98.147
+sip_user_13	avail	0	2	123	192.168.98.149
+sip_user_130	avail	0	2	123	192.168.98.147
+sip_user_131	avail	0	2	123	192.168.98.147
+sip_user_132	avail	0	2	123	192.168.98.147
+sip_user_133	avail	0	2	123	192.168.98.147
+sip_user_134	avail	0	2	123	192.168.98.147
+sip_user_135	avail	0	2	123	192.168.98.147
+sip_user_136	avail	0	2	123	192.168.98.147
+sip_user_137	avail	0	2	123	192.168.98.147
+sip_user_138	avail	0	2	123	192.168.98.147
+sip_user_139	avail	0	2	123	192.168.98.147
+sip_user_14	avail	0	2	123	192.168.98.149
+sip_user_140	avail	0	2	123	192.168.98.147
+sip_user_141	avail	0	2	123	192.168.98.147
+sip_user_142	avail	0	2	123	192.168.98.147
+sip_user_143	avail	0	2	123	192.168.98.147
+sip_user_144	avail	0	2	123	192.168.98.147
+sip_user_145	avail	0	2	123	192.168.98.147
+sip_user_146	avail	0	2	123	192.168.98.147
+sip_user_147	avail	0	2	123	192.168.98.147
+sip_user_148	avail	0	2	123	192.168.98.147
+sip_user_149	avail	0	2	123	192.168.98.147
+sip_user_15	avail	0	2	123	192.168.98.149
+sip_user_150	avail	0	2	123	192.168.98.147
+sip_user_151	avail	0	2	123	192.168.98.147
+sip_user_152	avail	0	2	123	192.168.98.147
+sip_user_153	avail	0	2	123	192.168.98.147
+sip_user_154	avail	0	2	123	192.168.98.147
+sip_user_155	avail	0	2	123	192.168.98.147
+sip_user_156	avail	0	2	123	192.168.98.147
+sip_user_157	avail	0	2	123	192.168.98.147
+sip_user_158	avail	0	2	123	192.168.98.147
+sip_user_159	avail	0	2	123	192.168.98.147
+sip_user_16	avail	0	2	123	192.168.98.149
+sip_user_160	avail	0	2	123	192.168.98.147
+sip_user_161	avail	0	2	123	192.168.98.147
+sip_user_162	avail	0	2	123	192.168.98.147
+sip_user_163	avail	0	2	123	192.168.98.147
+sip_user_164	avail	0	2	123	192.168.98.147
+sip_user_165	avail	0	2	123	192.168.98.147
+sip_user_166	avail	0	2	123	192.168.98.147
+sip_user_167	avail	0	2	123	192.168.98.147
+sip_user_168	avail	0	2	123	192.168.98.147
+sip_user_169	avail	0	2	123	192.168.98.147
+sip_user_17	avail	0	2	123	192.168.98.149
+sip_user_170	avail	0	2	123	192.168.98.147
+sip_user_171	avail	0	2	123	192.168.98.147
+sip_user_172	avail	0	2	123	192.168.98.147
+sip_user_173	avail	0	2	123	192.168.98.147
+sip_user_174	avail	0	2	123	192.168.98.147
+sip_user_175	avail	0	2	123	192.168.98.147
+sip_user_176	avail	0	2	123	192.168.98.147
+sip_user_177	avail	0	2	123	192.168.98.147
+sip_user_178	avail	0	2	123	192.168.98.147
+sip_user_179	avail	0	2	123	192.168.98.147
+sip_user_18	avail	0	2	123	192.168.98.149
+sip_user_180	avail	0	2	123	192.168.98.147
+sip_user_181	avail	0	2	123	192.168.98.147
+sip_user_182	avail	0	2	123	192.168.98.147
+sip_user_183	avail	0	2	123	192.168.98.147
+sip_user_184	avail	0	2	123	192.168.98.147
+sip_user_185	avail	0	2	123	192.168.98.147
+sip_user_186	avail	0	2	123	192.168.98.147
+sip_user_187	avail	0	2	123	192.168.98.147
+sip_user_188	avail	0	2	123	192.168.98.147
+sip_user_189	avail	0	2	123	192.168.98.147
+sip_user_19	avail	0	2	123	192.168.98.149
+sip_user_190	avail	0	2	123	192.168.98.147
+sip_user_191	avail	0	2	123	192.168.98.147
+sip_user_192	avail	0	2	123	192.168.98.147
+sip_user_193	avail	0	2	123	192.168.98.147
+sip_user_194	avail	0	2	123	192.168.98.147
+sip_user_195	avail	0	2	123	192.168.98.147
+sip_user_196	avail	0	2	123	192.168.98.147
+sip_user_197	avail	0	2	123	192.168.98.147
+sip_user_198	avail	0	2	123	192.168.98.147
+sip_user_199	avail	0	2	123	192.168.98.147
+sip_user_2	avail	0	2	123	192.168.98.147
+sip_user_20	avail	0	2	123	192.168.98.149
+sip_user_200	avail	0	2	123	192.168.98.147
+sip_user_21	avail	0	2	123	192.168.98.149
+sip_user_22	avail	0	2	123	192.168.98.149
+sip_user_23	avail	0	2	123	192.168.98.149
+sip_user_24	avail	0	2	123	192.168.98.149
+sip_user_25	avail	0	2	123	192.168.98.149
+sip_user_26	avail	0	2	123	192.168.98.149
+sip_user_27	avail	0	2	123	192.168.98.149
+sip_user_28	avail	0	2	123	192.168.98.149
+sip_user_29	avail	0	2	123	192.168.98.149
+sip_user_3	avail	0	2	123	192.168.98.147
+sip_user_30	avail	0	2	123	192.168.98.149
+sip_user_31	avail	0	2	123	192.168.98.149
+sip_user_32	avail	0	2	123	192.168.98.149
+sip_user_33	avail	0	2	123	192.168.98.149
+sip_user_34	avail	0	2	123	192.168.98.149
+sip_user_35	avail	0	2	123	192.168.98.149
+sip_user_36	avail	0	2	123	192.168.98.149
+sip_user_37	avail	0	2	123	192.168.98.149
+sip_user_38	avail	0	2	123	192.168.98.149
+sip_user_39	avail	0	2	123	192.168.98.149
+sip_user_4	avail	0	2	123	192.168.98.147
+sip_user_40	avail	0	2	123	192.168.98.149
+sip_user_41	avail	0	2	123	192.168.98.149
+sip_user_42	avail	0	2	123	192.168.98.149
+sip_user_43	avail	0	2	123	192.168.98.149
+sip_user_44	avail	0	2	123	192.168.98.149
+sip_user_45	ringend	0	2	123	192.168.98.149
+sip_user_46	ringend	0	2	123	192.168.98.149
+sip_user_47	avail	0	2	123	192.168.98.149
+sip_user_48	avail	0	2	123	192.168.98.149
+sip_user_49	avail	0	2	123	192.168.98.149
+sip_user_5	avail	0	2	123	192.168.98.147
+sip_user_50	avail	0	2	123	192.168.98.149
+sip_user_51	avail	0	2	123	192.168.98.149
+sip_user_52	avail	0	2	123	192.168.98.149
+sip_user_53	avail	0	2	123	192.168.98.149
+sip_user_54	avail	0	2	123	192.168.98.149
+sip_user_55	avail	0	2	123	192.168.98.149
+sip_user_56	ringend	0	2	123	192.168.98.149
+sip_user_57	avail	0	2	123	192.168.98.149
+sip_user_58	avail	0	2	123	192.168.98.149
+sip_user_59	avail	0	2	123	192.168.98.149
+sip_user_6	avail	0	2	123	192.168.98.147
+sip_user_60	avail	0	2	123	192.168.98.149
+sip_user_61	avail	0	2	123	192.168.98.149
+sip_user_62	avail	0	2	123	192.168.98.149
+sip_user_63	avail	0	2	123	192.168.98.149
+sip_user_64	avail	0	2	123	192.168.98.149
+sip_user_65	avail	0	2	123	192.168.98.149
+sip_user_66	avail	0	2	123	192.168.98.147
+sip_user_67	avail	0	2	123	192.168.98.147
+sip_user_68	avail	0	2	123	192.168.98.147
+sip_user_69	avail	0	2	123	192.168.98.147
+sip_user_7	avail	0	2	123	192.168.98.147
+sip_user_70	avail	0	2	123	192.168.98.147
+sip_user_71	avail	0	2	123	192.168.98.147
+sip_user_72	avail	0	2	123	192.168.98.147
+sip_user_73	avail	0	2	123	192.168.98.147
+sip_user_74	avail	0	2	123	192.168.98.147
+sip_user_75	avail	0	2	123	192.168.98.147
+sip_user_76	avail	0	2	123	192.168.98.147
+sip_user_77	ringend	0	2	123	192.168.98.147
+sip_user_78	avail	0	2	123	192.168.98.147
+sip_user_79	avail	0	2	123	192.168.98.147
+sip_user_8	avail	0	2	123	192.168.98.147
+sip_user_80	avail	0	2	123	192.168.98.147
+sip_user_81	avail	0	2	123	192.168.98.147
+sip_user_82	avail	0	2	123	192.168.98.147
+sip_user_83	avail	0	2	123	192.168.98.147
+sip_user_84	avail	0	2	123	192.168.98.147
+sip_user_85	avail	0	2	123	192.168.98.147
+sip_user_86	avail	0	2	123	192.168.98.147
+sip_user_87	avail	0	2	123	192.168.98.147
+sip_user_88	avail	0	2	123	192.168.98.147
+sip_user_89	avail	0	2	123	192.168.98.147
+sip_user_90	avail	0	2	123	192.168.98.147
+sip_user_91	avail	0	2	123	192.168.98.147
+sip_user_92	avail	0	2	123	192.168.98.147
+sip_user_93	avail	0	2	123	192.168.98.147
+sip_user_94	avail	0	2	123	192.168.98.147
+sip_user_95	avail	0	2	123	192.168.98.147
+sip_user_96	avail	0	2	123	192.168.98.147
+sip_user_97	avail	0	2	123	192.168.98.147
+sip_user_98	avail	0	2	123	192.168.98.147
+sip_user_99	avail	0	2	123	192.168.98.147
+\.
+
+
+--
+-- Data for Name: clone_records; Type: TABLE DATA;
+--
+
+COPY "clone_records" ("id", "created", "modified", "uid", "modelName", "cloneId", "origId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: companies; Type: TABLE DATA;
+--
+
+COPY "companies" ("id", "title", "base_id", "sort", "published", "scheduler_active", "key") FROM stdin;
+1	TEST	5ed00bf2b35de11fb2b1935382454fdb	0	0	1	test
+2	VOICE	9369ef98bb3f619078bb34cbf76ac6e4	0	0	1	voice
+\.
+
+
+--
+-- Data for Name: group_roles; Type: TABLE DATA;
+--
+
+COPY "group_roles" ("id", "group_id", "role_id") FROM stdin;
+\.
+
+
+--
+-- Data for Name: group_users; Type: TABLE DATA;
+--
+
+COPY "group_users" ("id", "group_id", "user_id") FROM stdin;
+1	0	1
+2	0	1
+3	0	1
+\.
+
+
+--
+-- Data for Name: groups; Type: TABLE DATA;
+--
+
+COPY "groups" ("id", "title", "company_id", "sort", "published") FROM stdin;
+\.
+
+
+--
+-- Data for Name: handler_classes; Type: TABLE DATA;
+--
+
+COPY "handler_classes" ("title", "class_name", "desc", "options", "defaults", "created", "modified", "general") FROM stdin;
+Handler\\Custom\\Beeline\\D8Handler	Handler\\Custom\\Beeline\\D8Handler	Handler\\Custom\\Beeline\\D8Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L1_1Handler	Handler\\Custom\\Beeline\\L1_1Handler	Handler\\Custom\\Beeline\\L1_1Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L1_2Handler	Handler\\Custom\\Beeline\\L1_2Handler	Handler\\Custom\\Beeline\\L1_2Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L2Handler	Handler\\Custom\\Beeline\\L2Handler	Handler\\Custom\\Beeline\\L2Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L3Handler	Handler\\Custom\\Beeline\\L3Handler	Handler\\Custom\\Beeline\\L3Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L4Handler	Handler\\Custom\\Beeline\\L4Handler	Handler\\Custom\\Beeline\\L4Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L5Handler	Handler\\Custom\\Beeline\\L5Handler	Handler\\Custom\\Beeline\\L5Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L6Handler	Handler\\Custom\\Beeline\\L6Handler	Handler\\Custom\\Beeline\\L6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\L7Handler	Handler\\Custom\\Beeline\\L7Handler	Handler\\Custom\\Beeline\\L7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\XXXHandler	Handler\\Custom\\Beeline\\XXXHandler	Handler\\Custom\\Beeline\\XXXHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\Y4Handler	Handler\\Custom\\Beeline\\Y4Handler	Handler\\Custom\\Beeline\\Y4Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\Y6Handler	Handler\\Custom\\Beeline\\Y6Handler	Handler\\Custom\\Beeline\\Y6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Beeline\\Y8Handler	Handler\\Custom\\Beeline\\Y8Handler	Handler\\Custom\\Beeline\\Y8Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan10Handler	Handler\\Custom\\Chelyab\\Ashan10Handler	Handler\\Custom\\Chelyab\\Ashan10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan11Handler	Handler\\Custom\\Chelyab\\Ashan11Handler	Handler\\Custom\\Chelyab\\Ashan11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan15Handler	Handler\\Custom\\Chelyab\\Ashan15Handler	Handler\\Custom\\Chelyab\\Ashan15Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan16Handler	Handler\\Custom\\Chelyab\\Ashan16Handler	Handler\\Custom\\Chelyab\\Ashan16Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan17Handler	Handler\\Custom\\Chelyab\\Ashan17Handler	Handler\\Custom\\Chelyab\\Ashan17Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan18Handler	Handler\\Custom\\Chelyab\\Ashan18Handler	Handler\\Custom\\Chelyab\\Ashan18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan19Handler	Handler\\Custom\\Chelyab\\Ashan19Handler	Handler\\Custom\\Chelyab\\Ashan19Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan20Handler	Handler\\Custom\\Chelyab\\Ashan20Handler	Handler\\Custom\\Chelyab\\Ashan20Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan21Handler	Handler\\Custom\\Chelyab\\Ashan21Handler	Handler\\Custom\\Chelyab\\Ashan21Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan24Handler	Handler\\Custom\\Chelyab\\Ashan24Handler	Handler\\Custom\\Chelyab\\Ashan24Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan25Handler	Handler\\Custom\\Chelyab\\Ashan25Handler	Handler\\Custom\\Chelyab\\Ashan25Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan32Handler	Handler\\Custom\\Chelyab\\Ashan32Handler	Handler\\Custom\\Chelyab\\Ashan32Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan6Handler	Handler\\Custom\\Chelyab\\Ashan6Handler	Handler\\Custom\\Chelyab\\Ashan6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan7Handler	Handler\\Custom\\Chelyab\\Ashan7Handler	Handler\\Custom\\Chelyab\\Ashan7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Ashan9Handler	Handler\\Custom\\Chelyab\\Ashan9Handler	Handler\\Custom\\Chelyab\\Ashan9Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\AshanTitleHandler	Handler\\Custom\\Chelyab\\AshanTitleHandler	Handler\\Custom\\Chelyab\\AshanTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\Handler14	Handler\\Custom\\Chelyab\\Handler14	Handler\\Custom\\Chelyab\\Handler14	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\ShopAnswerTitleHandler	Handler\\Custom\\Chelyab\\ShopAnswerTitleHandler	Handler\\Custom\\Chelyab\\ShopAnswerTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Chelyab\\ShopTitleHandler	Handler\\Custom\\Chelyab\\ShopTitleHandler	Handler\\Custom\\Chelyab\\ShopTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan10Handler	Handler\\Custom\\Kostroma\\Ashan10Handler	Handler\\Custom\\Kostroma\\Ashan10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan11Handler	Handler\\Custom\\Kostroma\\Ashan11Handler	Handler\\Custom\\Kostroma\\Ashan11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan15Handler	Handler\\Custom\\Kostroma\\Ashan15Handler	Handler\\Custom\\Kostroma\\Ashan15Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan18Handler	Handler\\Custom\\Kostroma\\Ashan18Handler	Handler\\Custom\\Kostroma\\Ashan18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan29Handler	Handler\\Custom\\Kostroma\\Ashan29Handler	Handler\\Custom\\Kostroma\\Ashan29Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan6Handler	Handler\\Custom\\Kostroma\\Ashan6Handler	Handler\\Custom\\Kostroma\\Ashan6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan7Handler	Handler\\Custom\\Kostroma\\Ashan7Handler	Handler\\Custom\\Kostroma\\Ashan7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\Ashan9Handler	Handler\\Custom\\Kostroma\\Ashan9Handler	Handler\\Custom\\Kostroma\\Ashan9Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\AshanAnswerTitleHandler	Handler\\Custom\\Kostroma\\AshanAnswerTitleHandler	Handler\\Custom\\Kostroma\\AshanAnswerTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\AshanQuestionTitleHandler	Handler\\Custom\\Kostroma\\AshanQuestionTitleHandler	Handler\\Custom\\Kostroma\\AshanQuestionTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\AshanTitleAshanHandler	Handler\\Custom\\Kostroma\\AshanTitleAshanHandler	Handler\\Custom\\Kostroma\\AshanTitleAshanHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Kostroma\\AshanTitleHandler	Handler\\Custom\\Kostroma\\AshanTitleHandler	Handler\\Custom\\Kostroma\\AshanTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL1AHandler	Handler\\Custom\\Magram\\DL1AHandler	Handler\\Custom\\Magram\\DL1AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL1CHandler	Handler\\Custom\\Magram\\DL1CHandler	Handler\\Custom\\Magram\\DL1CHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL2AHandler	Handler\\Custom\\Magram\\DL2AHandler	Handler\\Custom\\Magram\\DL2AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL2CHandler	Handler\\Custom\\Magram\\DL2CHandler	Handler\\Custom\\Magram\\DL2CHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL2Handler	Handler\\Custom\\Magram\\DL2Handler	Handler\\Custom\\Magram\\DL2Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL5Handler	Handler\\Custom\\Magram\\DL5Handler	Handler\\Custom\\Magram\\DL5Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL6Handler	Handler\\Custom\\Magram\\DL6Handler	Handler\\Custom\\Magram\\DL6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL7Handler	Handler\\Custom\\Magram\\DL7Handler	Handler\\Custom\\Magram\\DL7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DL8Handler	Handler\\Custom\\Magram\\DL8Handler	Handler\\Custom\\Magram\\DL8Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\DLCHandler	Handler\\Custom\\Magram\\DLCHandler	Handler\\Custom\\Magram\\DLCHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler1	Handler\\Custom\\Magram\\Handler1	Handler\\Custom\\Magram\\Handler1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler12	Handler\\Custom\\Magram\\Handler12	Handler\\Custom\\Magram\\Handler12	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler13_19	Handler\\Custom\\Magram\\Handler13_19	Handler\\Custom\\Magram\\Handler13_19	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler13_2	Handler\\Custom\\Magram\\Handler13_2	Handler\\Custom\\Magram\\Handler13_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler14_1	Handler\\Custom\\Magram\\Handler14_1	Handler\\Custom\\Magram\\Handler14_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler14_2	Handler\\Custom\\Magram\\Handler14_2	Handler\\Custom\\Magram\\Handler14_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler15	Handler\\Custom\\Magram\\Handler15	Handler\\Custom\\Magram\\Handler15	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler16_1	Handler\\Custom\\Magram\\Handler16_1	Handler\\Custom\\Magram\\Handler16_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler16_2	Handler\\Custom\\Magram\\Handler16_2	Handler\\Custom\\Magram\\Handler16_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler17_1	Handler\\Custom\\Magram\\Handler17_1	Handler\\Custom\\Magram\\Handler17_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler17_2	Handler\\Custom\\Magram\\Handler17_2	Handler\\Custom\\Magram\\Handler17_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler18_1	Handler\\Custom\\Magram\\Handler18_1	Handler\\Custom\\Magram\\Handler18_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler18_2	Handler\\Custom\\Magram\\Handler18_2	Handler\\Custom\\Magram\\Handler18_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler19_1	Handler\\Custom\\Magram\\Handler19_1	Handler\\Custom\\Magram\\Handler19_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler19_2	Handler\\Custom\\Magram\\Handler19_2	Handler\\Custom\\Magram\\Handler19_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler3_2	Handler\\Custom\\Magram\\Handler3_2	Handler\\Custom\\Magram\\Handler3_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler4_1	Handler\\Custom\\Magram\\Handler4_1	Handler\\Custom\\Magram\\Handler4_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler4_2	Handler\\Custom\\Magram\\Handler4_2	Handler\\Custom\\Magram\\Handler4_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler5	Handler\\Custom\\Magram\\Handler5	Handler\\Custom\\Magram\\Handler5	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler6_1	Handler\\Custom\\Magram\\Handler6_1	Handler\\Custom\\Magram\\Handler6_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler6_2	Handler\\Custom\\Magram\\Handler6_2	Handler\\Custom\\Magram\\Handler6_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler7_1	Handler\\Custom\\Magram\\Handler7_1	Handler\\Custom\\Magram\\Handler7_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler7_2	Handler\\Custom\\Magram\\Handler7_2	Handler\\Custom\\Magram\\Handler7_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler8_1	Handler\\Custom\\Magram\\Handler8_1	Handler\\Custom\\Magram\\Handler8_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler8_2	Handler\\Custom\\Magram\\Handler8_2	Handler\\Custom\\Magram\\Handler8_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler9_1	Handler\\Custom\\Magram\\Handler9_1	Handler\\Custom\\Magram\\Handler9_1	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\Handler9_2	Handler\\Custom\\Magram\\Handler9_2	Handler\\Custom\\Magram\\Handler9_2	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\HandlerD5	Handler\\Custom\\Magram\\HandlerD5	Handler\\Custom\\Magram\\HandlerD5	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\P3Handler	Handler\\Custom\\Magram\\P3Handler	Handler\\Custom\\Magram\\P3Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\P8Handler	Handler\\Custom\\Magram\\P8Handler	Handler\\Custom\\Magram\\P8Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\P9Handler	Handler\\Custom\\Magram\\P9Handler	Handler\\Custom\\Magram\\P9Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Magram\\XXXHandler	Handler\\Custom\\Magram\\XXXHandler	Handler\\Custom\\Magram\\XXXHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q12Handler	Handler\\Custom\\NielsonDrive\\Q12Handler	Handler\\Custom\\NielsonDrive\\Q12Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q16Handler	Handler\\Custom\\NielsonDrive\\Q16Handler	Handler\\Custom\\NielsonDrive\\Q16Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q17Handler	Handler\\Custom\\NielsonDrive\\Q17Handler	Handler\\Custom\\NielsonDrive\\Q17Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q18Handler	Handler\\Custom\\NielsonDrive\\Q18Handler	Handler\\Custom\\NielsonDrive\\Q18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q21Handler	Handler\\Custom\\NielsonDrive\\Q21Handler	Handler\\Custom\\NielsonDrive\\Q21Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonDrive\\Q23Handler	Handler\\Custom\\NielsonDrive\\Q23Handler	Handler\\Custom\\NielsonDrive\\Q23Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonEnergy\\Q10Handler	Handler\\Custom\\NielsonEnergy\\Q10Handler	Handler\\Custom\\NielsonEnergy\\Q10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonEnergy\\Q11Handler	Handler\\Custom\\NielsonEnergy\\Q11Handler	Handler\\Custom\\NielsonEnergy\\Q11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonEnergy\\Q12AnswerHandler	Handler\\Custom\\NielsonEnergy\\Q12AnswerHandler	Handler\\Custom\\NielsonEnergy\\Q12AnswerHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonEnergy\\Q12Handler	Handler\\Custom\\NielsonEnergy\\Q12Handler	Handler\\Custom\\NielsonEnergy\\Q12Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonEnergy\\Q12QuestionHandler	Handler\\Custom\\NielsonEnergy\\Q12QuestionHandler	Handler\\Custom\\NielsonEnergy\\Q12QuestionHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q10Handler	Handler\\Custom\\NielsonGas\\Q10Handler	Handler\\Custom\\NielsonGas\\Q10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q11Handler	Handler\\Custom\\NielsonGas\\Q11Handler	Handler\\Custom\\NielsonGas\\Q11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q12AnswerHandler	Handler\\Custom\\NielsonGas\\Q12AnswerHandler	Handler\\Custom\\NielsonGas\\Q12AnswerHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q12Handler	Handler\\Custom\\NielsonGas\\Q12Handler	Handler\\Custom\\NielsonGas\\Q12Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q12QuestionHandler	Handler\\Custom\\NielsonGas\\Q12QuestionHandler	Handler\\Custom\\NielsonGas\\Q12QuestionHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q16Handler	Handler\\Custom\\NielsonGas\\Q16Handler	Handler\\Custom\\NielsonGas\\Q16Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q18Handler	Handler\\Custom\\NielsonGas\\Q18Handler	Handler\\Custom\\NielsonGas\\Q18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\NielsonGas\\Q25Handler	Handler\\Custom\\NielsonGas\\Q25Handler	Handler\\Custom\\NielsonGas\\Q25Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\CityHandler	Handler\\Custom\\Novgorod\\CityHandler	Handler\\Custom\\Novgorod\\CityHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11AHandler	Handler\\Custom\\Novgorod\\Novgorod11AHandler	Handler\\Custom\\Novgorod\\Novgorod11AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11BHandler	Handler\\Custom\\Novgorod\\Novgorod11BHandler	Handler\\Custom\\Novgorod\\Novgorod11BHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11CHandler	Handler\\Custom\\Novgorod\\Novgorod11CHandler	Handler\\Custom\\Novgorod\\Novgorod11CHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11DHandler	Handler\\Custom\\Novgorod\\Novgorod11DHandler	Handler\\Custom\\Novgorod\\Novgorod11DHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11EHandler	Handler\\Custom\\Novgorod\\Novgorod11EHandler	Handler\\Custom\\Novgorod\\Novgorod11EHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11FHandler	Handler\\Custom\\Novgorod\\Novgorod11FHandler	Handler\\Custom\\Novgorod\\Novgorod11FHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod11IHandler	Handler\\Custom\\Novgorod\\Novgorod11IHandler	Handler\\Custom\\Novgorod\\Novgorod11IHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod12AHandler	Handler\\Custom\\Novgorod\\Novgorod12AHandler	Handler\\Custom\\Novgorod\\Novgorod12AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod12BHandler	Handler\\Custom\\Novgorod\\Novgorod12BHandler	Handler\\Custom\\Novgorod\\Novgorod12BHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod12CHandler	Handler\\Custom\\Novgorod\\Novgorod12CHandler	Handler\\Custom\\Novgorod\\Novgorod12CHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod13CHandler	Handler\\Custom\\Novgorod\\Novgorod13CHandler	Handler\\Custom\\Novgorod\\Novgorod13CHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod13DHandler	Handler\\Custom\\Novgorod\\Novgorod13DHandler	Handler\\Custom\\Novgorod\\Novgorod13DHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod13EHandler	Handler\\Custom\\Novgorod\\Novgorod13EHandler	Handler\\Custom\\Novgorod\\Novgorod13EHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod13FHandler	Handler\\Custom\\Novgorod\\Novgorod13FHandler	Handler\\Custom\\Novgorod\\Novgorod13FHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod17Handler	Handler\\Custom\\Novgorod\\Novgorod17Handler	Handler\\Custom\\Novgorod\\Novgorod17Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod19QHandler	Handler\\Custom\\Novgorod\\Novgorod19QHandler	Handler\\Custom\\Novgorod\\Novgorod19QHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod21Handler	Handler\\Custom\\Novgorod\\Novgorod21Handler	Handler\\Custom\\Novgorod\\Novgorod21Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\Novgorod22QHandler	Handler\\Custom\\Novgorod\\Novgorod22QHandler	Handler\\Custom\\Novgorod\\Novgorod22QHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\NovgorodW2Handler	Handler\\Custom\\Novgorod\\NovgorodW2Handler	Handler\\Custom\\Novgorod\\NovgorodW2Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Novgorod\\NovgorodW3Handler	Handler\\Custom\\Novgorod\\NovgorodW3Handler	Handler\\Custom\\Novgorod\\NovgorodW3Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Ryazan\\Ashan11Handler	Handler\\Custom\\Ryazan\\Ashan11Handler	Handler\\Custom\\Ryazan\\Ashan11Handler	a:3:{s:7:"notShop";s:29:"Код - пропустить";s:13:"lastAshanShop";s:22:"Код - ашан до";s:12:"lastGrayShop";s:41:"Код - серые магазины до";}	a:3:{s:7:"notShop";N;s:13:"lastAshanShop";N;s:12:"lastGrayShop";N;}	1393580309	0	0
+Handler\\Custom\\Ryazan\\Ashan14Handler	Handler\\Custom\\Ryazan\\Ashan14Handler	Handler\\Custom\\Ryazan\\Ashan14Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Ryazan\\Ashan15Handler	Handler\\Custom\\Ryazan\\Ashan15Handler	\n            if ashan == 0 to notAshanCod;\n\n            if ashan[markIndex] <= 3 change questionTitle\n            else to nextAshanCod\n        	a:3:{s:11:"notAshanCod";s:61:"Код - куда прыгаем если нет ашанов";s:9:"markIndex";s:86:"Номер по порядку того ашана который используем";s:12:"nextAshanCod";s:88:"Код - куда прыгаем для проверки следующего ашана";}	a:3:{s:11:"notAshanCod";s:2:"21";s:9:"markIndex";i:1;s:12:"nextAshanCod";s:2:"18";}	1393580309	0	0
+Handler\\Custom\\Ryazan\\Ashan32Handler	Handler\\Custom\\Ryazan\\Ashan32Handler	Handler\\Custom\\Ryazan\\Ashan32Handler	a:1:{s:8:"countCod";s:58:"Код вопроса с количеством детей";}	a:1:{s:8:"countCod";s:2:"31";}	1393580309	0	0
+Handler\\Custom\\Ryazan\\ShopAnswerTitleHandler	Handler\\Custom\\Ryazan\\ShopAnswerTitleHandler	Handler\\Custom\\Ryazan\\ShopAnswerTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan10AHandler	Handler\\Custom\\Saratov\\Ashan10AHandler	Handler\\Custom\\Saratov\\Ashan10AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan10Handler	Handler\\Custom\\Saratov\\Ashan10Handler	Handler\\Custom\\Saratov\\Ashan10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan11Handler	Handler\\Custom\\Saratov\\Ashan11Handler	Handler\\Custom\\Saratov\\Ashan11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan15Handler	Handler\\Custom\\Saratov\\Ashan15Handler	Handler\\Custom\\Saratov\\Ashan15Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan16Handler	Handler\\Custom\\Saratov\\Ashan16Handler	Handler\\Custom\\Saratov\\Ashan16Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan17Handler	Handler\\Custom\\Saratov\\Ashan17Handler	Handler\\Custom\\Saratov\\Ashan17Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan18Handler	Handler\\Custom\\Saratov\\Ashan18Handler	Handler\\Custom\\Saratov\\Ashan18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan19Handler	Handler\\Custom\\Saratov\\Ashan19Handler	Handler\\Custom\\Saratov\\Ashan19Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan20Handler	Handler\\Custom\\Saratov\\Ashan20Handler	Handler\\Custom\\Saratov\\Ashan20Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan21Handler	Handler\\Custom\\Saratov\\Ashan21Handler	Handler\\Custom\\Saratov\\Ashan21Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan22Handler	Handler\\Custom\\Saratov\\Ashan22Handler	Handler\\Custom\\Saratov\\Ashan22Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan23Handler	Handler\\Custom\\Saratov\\Ashan23Handler	Handler\\Custom\\Saratov\\Ashan23Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan24Handler	Handler\\Custom\\Saratov\\Ashan24Handler	Handler\\Custom\\Saratov\\Ashan24Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan36Handler	Handler\\Custom\\Saratov\\Ashan36Handler	Handler\\Custom\\Saratov\\Ashan36Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan6Handler	Handler\\Custom\\Saratov\\Ashan6Handler	Handler\\Custom\\Saratov\\Ashan6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan7Handler	Handler\\Custom\\Saratov\\Ashan7Handler	Handler\\Custom\\Saratov\\Ashan7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Ashan9Handler	Handler\\Custom\\Saratov\\Ashan9Handler	Handler\\Custom\\Saratov\\Ashan9Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\AshanTitleHandler	Handler\\Custom\\Saratov\\AshanTitleHandler	Handler\\Custom\\Saratov\\AshanTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\Handler14	Handler\\Custom\\Saratov\\Handler14	Handler\\Custom\\Saratov\\Handler14	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\ShopAnswerTitleHandler	Handler\\Custom\\Saratov\\ShopAnswerTitleHandler	Handler\\Custom\\Saratov\\ShopAnswerTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Saratov\\ShopTitleHandler	Handler\\Custom\\Saratov\\ShopTitleHandler	Handler\\Custom\\Saratov\\ShopTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan10AHandler	Handler\\Custom\\Yaroslavl\\Ashan10AHandler	Handler\\Custom\\Yaroslavl\\Ashan10AHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan10Handler	Handler\\Custom\\Yaroslavl\\Ashan10Handler	Handler\\Custom\\Yaroslavl\\Ashan10Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan11Handler	Handler\\Custom\\Yaroslavl\\Ashan11Handler	Handler\\Custom\\Yaroslavl\\Ashan11Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan15Handler	Handler\\Custom\\Yaroslavl\\Ashan15Handler	Handler\\Custom\\Yaroslavl\\Ashan15Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan16Handler	Handler\\Custom\\Yaroslavl\\Ashan16Handler	Handler\\Custom\\Yaroslavl\\Ashan16Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan17Handler	Handler\\Custom\\Yaroslavl\\Ashan17Handler	Handler\\Custom\\Yaroslavl\\Ashan17Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan18Handler	Handler\\Custom\\Yaroslavl\\Ashan18Handler	Handler\\Custom\\Yaroslavl\\Ashan18Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan19Handler	Handler\\Custom\\Yaroslavl\\Ashan19Handler	Handler\\Custom\\Yaroslavl\\Ashan19Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan20Handler	Handler\\Custom\\Yaroslavl\\Ashan20Handler	Handler\\Custom\\Yaroslavl\\Ashan20Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan21Handler	Handler\\Custom\\Yaroslavl\\Ashan21Handler	Handler\\Custom\\Yaroslavl\\Ashan21Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan22Handler	Handler\\Custom\\Yaroslavl\\Ashan22Handler	Handler\\Custom\\Yaroslavl\\Ashan22Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan23Handler	Handler\\Custom\\Yaroslavl\\Ashan23Handler	Handler\\Custom\\Yaroslavl\\Ashan23Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan24Handler	Handler\\Custom\\Yaroslavl\\Ashan24Handler	Handler\\Custom\\Yaroslavl\\Ashan24Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan36Handler	Handler\\Custom\\Yaroslavl\\Ashan36Handler	Handler\\Custom\\Yaroslavl\\Ashan36Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan6Handler	Handler\\Custom\\Yaroslavl\\Ashan6Handler	Handler\\Custom\\Yaroslavl\\Ashan6Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan7Handler	Handler\\Custom\\Yaroslavl\\Ashan7Handler	Handler\\Custom\\Yaroslavl\\Ashan7Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Ashan9Handler	Handler\\Custom\\Yaroslavl\\Ashan9Handler	Handler\\Custom\\Yaroslavl\\Ashan9Handler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\AshanTitleHandler	Handler\\Custom\\Yaroslavl\\AshanTitleHandler	Handler\\Custom\\Yaroslavl\\AshanTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\Handler14	Handler\\Custom\\Yaroslavl\\Handler14	Handler\\Custom\\Yaroslavl\\Handler14	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\ShopAnswerTitleHandler	Handler\\Custom\\Yaroslavl\\ShopAnswerTitleHandler	Handler\\Custom\\Yaroslavl\\ShopAnswerTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Handler\\Custom\\Yaroslavl\\ShopTitleHandler	Handler\\Custom\\Yaroslavl\\ShopTitleHandler	Handler\\Custom\\Yaroslavl\\ShopTitleHandler	a:0:{}	a:0:{}	1393580309	0	0
+Удалить уже имеющиеся ответы в ответах	Handler\\General\\AnswerTemplate\\DeleteHandler	\n            Выбираем из вопросы questionCodes (не берем excludeCodes)\n            и удаляем из текущих ответов данные коды\n        	a:0:{}	a:0:{}	1401267056	0	1
+Оставить только имеющиеся ответы в ответах	Handler\\General\\AnswerTemplate\\SameHandler	\n            Выбираем из вопросов questionCodes (не берем excludeCodes)\n            и оставляем в текущих ответах\n            только данные ответы и requiredCodes \n        	a:0:{}	a:0:{}	1401267056	0	1
+Переход на другой вопрос по условию	Handler\\General\\Jump\\ConditionHandler	\n            При выполнении условий\n            прыгаем на вопрос jumpCod\n        	a:0:{}	a:0:{}	1401267056	0	1
+Прыжок при количестве	Handler\\General\\Jump\\CountHandler	Прыжок при количестве	a:3:{s:11:"questionCod";s:30:"В каком вопрсосе";s:7:"jumpCod";s:28:"На какой вопрос";s:5:"count";s:53:"При каком количестве ответов";}	a:3:{s:11:"questionCod";N;s:7:"jumpCod";N;s:5:"count";i:1;}	1401267056	0	1
+Переход при пустом вопросе	Handler\\General\\Jump\\EmptyHandler	Если вопрос с типом таблица и нет subQuestions то прыгаем\n                Если нет answerTemplates то прыгаем	a:0:{}	a:0:{}	1401267056	0	1
+Замена названия вопроса	Handler\\General\\Question\\TitleHandler	\n            Берет ответ из questionCod\n            и подставляет заместо mask\n\n            Если mask пустая вставляет заместо всего вопроса\n        	a:0:{}	a:0:{}	1401267056	0	1
+Удалить подвопросы под условием	Handler\\General\\SubQuestion\\DeleteConditionHandler	\n            Если в  questionCodes выбраны answerCodes\n            то удаляем subQuestionCodes\n        	a:0:{}	a:0:{}	1401267056	0	1
+Удалить уже имеющиеся ответы в подвопросах	Handler\\General\\SubQuestion\\DeleteHandler	\n            Выбираем из вопросы questionCodes (не берем excludeCodes)\n            и удаляем из текущих подвопросов данные коды\n        	a:0:{}	a:0:{}	1401267056	0	1
+Оставить только имеющиеся ответы в подвопросах	Handler\\General\\SubQuestion\\SameHandler	\n            Выбираем из вопросов questionCodes (не берем excludeCodes)\n            и оставляем в текущих подвопросах\n            только данные ответы и requiredCodes \n        	a:0:{}	a:0:{}	1401267056	0	1
+\.
+
+
+--
+-- Data for Name: notices; Type: TABLE DATA;
+--
+
+COPY "notices" ("id", "author_type", "author_id", "user_id", "message", "created", "modified", "sort", "notice_level", "readed", "readedTime") FROM stdin;
+\.
+
+
+--
+-- Data for Name: operators; Type: TABLE DATA;
+--
+
+COPY "operators" ("id", "sort", "published", "created", "modified", "name", "surname", "patronymic", "login", "password", "desc", "account_name", "use_webrtc", "poll_template_id", "emulate", "company_id", "operator_group_id", "phone", "ip", "session_id") FROM stdin;
+1	\N	1	1392895533	1404794171	operator100	operator100	operator100	operator100	202cb962ac59075b964b07152d234b70	\N	sip_user_100	1	37	1	2	2		192.168.98.117	dd3kp8f7s92obrslep0tt1hrj6
+2	\N	1	1393839242	1394178681	operator29	operator29	operator29	operator29	202cb962ac59075b964b07152d234b70	\N	sip_user_29	1	34	0	2	\N	\N	\N	\N
+3	\N	1	1393916744	1395386372	operator62	operator62	operator62	operator62	202cb962ac59075b964b07152d234b70	\N	sip_user_62	1	34	0	2	\N	\N	\N	\N
+4	\N	1	1394098826	1398166547	operator20	operator20	operator20	operator20	202cb962ac59075b964b07152d234b70	\N	sip_user_20	0	34	1	2	\N	\N	\N	\N
+5	\N	1	1394163875	1399347380	Виктория	Шевченко	_	operator65	202cb962ac59075b964b07152d234b70	\N	sip_user_65	1	34	0	2	\N	\N	\N	\N
+6	\N	1	1394775740	1404192018	operator11	operator11	operator11	operator11	202cb962ac59075b964b07152d234b70	\N	sip_user_11	1	0	0	2	2		192.168.98.117	\N
+7	\N	1	1397750608	1404710109	asdf	asdf	asdf	sip_user_56	202cb962ac59075b964b07152d234b70	\N	sip_user_56	1	37	0	2	2		127.0.0.1	bn9ac6ijikbdelqms7bn67vj03
+8	\N	1	1398309600	1398740760	22	22	22	operator22	202cb962ac59075b964b07152d234b70	\N	sip_user_22	0	34	0	2	2	\N	\N	\N
+9	\N	1	1394779951	1399308383	operator17	operator17	operator17	operator17	202cb962ac59075b964b07152d234b70	\N	sip_user_17	1	34	0	2	\N	\N	\N	\N
+10	\N	1	1394779984	1399460810	operator37	operator37	operator37	operator37	202cb962ac59075b964b07152d234b70	\N	sip_user_37	1	34	0	2	\N	\N	192.168.98.37	\N
+11	\N	1	1394780053	1399374031	operator35	operator35	operator35	operator35	202cb962ac59075b964b07152d234b70	\N	sip_user_35	1	34	0	2	\N	\N	192.168.98.35	\N
+12	\N	1	1398853467	1398853485	dfgdfg	dfgdf	dfgdf	123	202cb962ac59075b964b07152d234b70	\N	sip_user_64	0	34	0	2	2	\N	\N	\N
+13	\N	1	1398860306	1400147855	121	12	12	operator1033	202cb962ac59075b964b07152d234b70	\N	sip_user_63	1	34	0	2	2		192.168.98.223	\N
+14	\N	1	1394781544	1399294866	operator32	operator32	operator32	operator32	202cb962ac59075b964b07152d234b70	\N	sip_user_32	1	34	0	2	\N	\N	\N	\N
+15	\N	1	1399294864	\N	12312	12321	12321	1111	202cb962ac59075b964b07152d234b70	\N	sip_user_61	1	34	0	2	2	123123	\N	\N
+16	\N	1	1400496801	1400646283	operator111	operator111	operator111	operator111	202cb962ac59075b964b07152d234b70	\N	sip_user_111	1	34	0	2	3		192.168.98.117	\N
+18	\N	1	1394783783	1399361822	operator27	operator27	operator27	operator27	202cb962ac59075b964b07152d234b70	\N	sip_user_27	1	34	0	2	\N	\N	192.168.98.27	\N
+22	\N	1	1394793727	1399290377	operator12	operator12	operator12	operator12	202cb962ac59075b964b07152d234b70	\N	sip_user_12	1	34	0	2	\N	\N	\N	\N
+23	\N	1	1394795897	1398405883	operator13	operator13	operator13	operator13	202cb962ac59075b964b07152d234b70	\N	sip_user_13	1	34	0	2	\N	\N	\N	\N
+24	\N	1	1394795930	1399036809	operator15	operator15	operator15	operator15	202cb962ac59075b964b07152d234b70	\N	sip_user_15	1	34	0	2	\N	\N	\N	\N
+25	\N	1	1394795984	1399288258	operator16	operator16	operator16	operator16	202cb962ac59075b964b07152d234b70	\N	sip_user_16	1	34	0	2	\N	\N	\N	\N
+26	\N	1	1394796019	1399342536	operator21	operator21	operator21	operator21	202cb962ac59075b964b07152d234b70	\N	sip_user_21	1	34	0	2	\N	\N	\N	\N
+28	\N	1	1394796166	1399455007	operator23	operator23	operator23	operator23	202cb962ac59075b964b07152d234b70	\N	sip_user_23	1	34	0	2	\N	\N	192.168.98.23	\N
+29	\N	1	1394796201	1399342651	operator24	operator24	operator24	operator24	202cb962ac59075b964b07152d234b70	\N	sip_user_24	1	34	0	2	\N	\N	\N	\N
+30	\N	1	1394796292	1399215135	operator34	operator34	operator34	operator34	202cb962ac59075b964b07152d234b70	\N	sip_user_34	1	34	0	2	\N	\N	\N	\N
+31	\N	1	1394796341	1399375181	operator28	operator28	operator28	operator28	202cb962ac59075b964b07152d234b70	\N	sip_user_28	1	34	0	2	\N	\N	192.168.98.28	\N
+32	\N	1	1394796394	1398405936	operator25	operator25	operator25	operator25	202cb962ac59075b964b07152d234b70	\N	sip_user_25	1	34	0	2	\N	\N	\N	\N
+33	\N	1	1395651848	1398406000	operator60	operator60	operator60	operator60	202cb962ac59075b964b07152d234b70	\N	sip_user_60	1	34	0	2	\N	\N	\N	\N
+34	\N	1	1395664757	1399526967	operator30	operator30	operator30	operator30	202cb962ac59075b964b07152d234b70	\N	sip_user_30	1	34	0	2	\N	\N	192.168.98.30	\N
+35	\N	1	1395664928	1399287943	operator26	operator26	operator26	operator26	202cb962ac59075b964b07152d234b70	\N	sip_user_26	1	34	0	2	\N	\N	\N	\N
+36	\N	1	1395740144	1399216167	operator51	operator51	operator51	operator51	202cb962ac59075b964b07152d234b70	\N	sip_user_51	1	34	0	2	\N	\N	\N	\N
+38	\N	1	1398135382	1401085991	Наталья	Носова	Витальевна	operator101	202cb962ac59075b964b07152d234b70	\N	sip_user_101	1	0	0	2	\N	\N	192.168.98.223	\N
+39	\N	1	1398309327	1400573625	Олеся	Трибунская	Николаевна	tribunskaya.olesya@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_102	1	34	0	2	1		192.168.98.12	\N
+40	\N	1	1398309344	1399618197	Анна	Атаманенко	Анатольевна	atamanenko89@yandex.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_103	1	34	0	2	\N	\N	192.168.98.31	\N
+41	\N	1	1398309360	1399342799	Татьяна	Янгучина	Михайловна	operator104	202cb962ac59075b964b07152d234b70	\N	sip_user_104	1	34	0	2	\N	\N	\N	\N
+42	\N	1	1398309377	1400233723	Юлия	Даниленко	Александровна	yulia.danilenko2015@yandex.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_105	1	34	0	2	\N	\N	192.168.98.18	\N
+43	\N	1	1398399676	1400565421	Елизавета	Пархоменко	Александровна	cc_kaep@list.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_106	1	34	0	2	\N	\N	192.168.98.37	\N
+45	\N	1	1399277141	1400494042	Игорь	Кузлякин	Владимирович	igor_89omsk@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_59	1	34	0	2	1	89514097842	192.168.98.17	\N
+47	\N	1	1399287917	1400061476	Юлия	Шестак	Николаевна	shestak.1993.93@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_58	1	34	0	2	1	89040753931	192.168.98.18	\N
+48	\N	1	1399341613	1400493181	Юлия	Богута	Алексеевна	yulyaxl@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_57	1	34	0	2	1	89136324841	192.168.98.36	\N
+50	\N	1	1399342578	1400500545	Эвелина	Мартенс 	Владимировна	evelinochka_kz@inbox.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_55	1	34	0	2	1	89620558011	192.168.98.14	\N
+51	\N	1	1399342590	1400251530	Алексей	Поливин	Александрович	zchikimokifo@gmail.com	202cb962ac59075b964b07152d234b70	\N	sip_user_54	1	34	0	2	1	89609942865	192.168.98.11	\N
+52	\N	1	1399342644	1400565458	Марина	Пестрикова	Васильевна	marpesik@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_53	1	34	0	2	1	89039822292	192.168.98.32	\N
+53	\N	1	1399342656	1400565499	Татьяна	Товерова	Игоревна	flimsi@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_52	1	34	0	2	1	89095379047	192.168.98.13	\N
+54	\N	1	1399342808	1399891708	Елена	Мораш	Анатольевна	morash.ru_@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_50	1	34	0	2	1	89087930989	192.168.98.21	\N
+55	\N	1	1399342913	1400565542	Виктория	Шевченко	Витальевна	shevhenko@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_49	1	34	0	2	1	89043204077	192.168.98.35	\N
+56	\N	1	1399343027	1400565797	Елена	Мораш	Анатольевна	morash_@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_48	1	34	0	2	1	89087930989	192.168.98.21	\N
+57	\N	1	1399343546	1400570938	Татьяна	Янгучина	Михайловна	yangushina@mail.ru 	202cb962ac59075b964b07152d234b70	\N	sip_user_47	1	34	0	2	1	89514111555	192.168.98.18	\N
+58	\N	1	1399350999	1399373299	Кристина	Лукьянова	Анатольевна	kristina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_46	1	34	0	2	2	89514229679	192.168.98.23	\N
+59	\N	1	1399352468	1399992646	Арсений	Салиндер	Васильевич	salinder.arseniy@inbox.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_45	1	34	0	2	2	89507904936	192.168.98.38	\N
+60	\N	1	1399353720	1400565846	Екатерина	Бурикова	Сергеевна	fuchsia@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_44	1	34	0	2	1	89659751330	192.168.98.25	\N
+61	\N	1	1399353828	1400320568	Светлана	Никулина 	Ивановна	NIKULINA@MAIL.RU5324	202cb962ac59075b964b07152d234b70	\N	sip_user_43	1	34	0	2	1	89509563848	192.168.98.11	\N
+62	\N	1	1399357559	1400061469	Светлана	Кабурнеева	Геннадьевна	kaburneeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_42	1	34	0	2	1	89514119427	192.168.98.61	\N
+63	\N	1	1399358168	1399957599	Анна	Дылда	Анатольевна	anna55reg70@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_41	1	34	0	2	1	89507915711	192.168.98.19	\N
+64	\N	1	1399359491	1400511356	Наталья	Суслова	Петровна	sus07	202cb962ac59075b964b07152d234b70	\N	sip_user_40	1	34	0	2	2	89136508376	192.168.98.18	\N
+65	\N	1	1399359516	1400565479	Эмиль	Хилажетдинов	Айратович	mg556@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_39	1	34	0	2	1	89236951107	192.168.98.24	\N
+66	\N	1	1399359907	1399373653	Мария	Царёва	Александровна	Mashen-ka.Tsaryova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_33	1	34	0	2	1	89081077438	192.168.98.22	\N
+67	\N	1	1399360037	1399373960	Бауржан	Абылкасымов	Тулеулиевич	babylkasymov@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_130	1	34	0	2	1	89533985266	192.168.98.18	\N
+68	\N	1	1399360925	1400574237	Наталья	Саватеева	Владимировна	savateeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_129	1	34	0	2	1	89136401977	192.168.98.22	\N
+69	\N	1	1399364072	1399373480	Виктория	Федорова	Владиславовна	www.vika_33@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_128	1	34	0	2	1	89507883880	192.168.98.35	\N
+70	\N	1	1399372209	1399373487	Евгения	Баграмянц	Руслановна	denis010101@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_127	1	34	0	2	2	89083188368	192.168.98.36	\N
+71	\N	1	1399373422	1400079060	Валентина	Баева	Анатольевна	Baeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_126	1	34	0	2	1	89045824130	192.168.98.31	\N
+72	\N	1	1399373448	1399560463	Татьяна	Малкова	Геннадьевна	Malkova_tatyana00@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_125	1	34	0	2	3	89514143474	192.168.98.63	\N
+73	\N	1	1399373645	\N	Дана	Исимова	Армановна	Dana	202cb962ac59075b964b07152d234b70	\N	sip_user_124	1	34	0	2	1	89503326537	\N	\N
+74	\N	1	1399373646	1400251694	Татьяна	Самсонова	Михайловна	CrazyEmo09@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_123	1	34	0	2	2	89087954566	192.168.98.20	\N
+75	\N	1	1399374011	1400251495	Елена	Кукарина	Юрьевна	lenkakukarina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_122	1	34	0	2	2	89507864674	192.168.98.25	\N
+76	\N	1	1399374045	1399560980	Виктория	Швецова	Николаевна	viktoria-marsel1705-1991@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_121	1	34	0	2	3	89659788747	192.168.98.26	\N
+77	\N	1	1399374067	1400251431	Елена	Пронькина	Сергеевна	lena-pronkina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_120	1	34	0	2	1	89131483202	192.168.98.61	\N
+78	\N	1	1399374126	1400166547	Антон	Липанин	Сергеевич	toni.coldheart@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_119	1	34	0	2	1	89139630905	192.168.98.34	\N
+79	\N	1	1399374225	1399395228	Никита	Лыков	Сергеевич	nikita.lykov@gmail.com	202cb962ac59075b964b07152d234b70	\N	sip_user_118	1	34	0	2	1	89136356256	192.168.98.22	\N
+80	\N	1	1399374289	1399378061	Жулдус	Тасибекова	Урозбековна	tasibekova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_117	1	34	0	2	2	89136574537	192.168.98.35	\N
+81	\N	1	1399374347	1400493417	Юлия	Бут	Сергеевна	ylia081094@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_116	1	34	0	2	1	89514215443	192.168.98.13	\N
+82	\N	1	1399374375	1399546430	Елена	Пылаева	Евгеньевна	Pylaeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_115	1	34	0	2	1	89293670875	192.168.98.11	\N
+83	\N	1	1399374381	1400079273	Дана	Исимова	Армановна	dano4ka9301@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_114	1	34	0	2	1	89503326537	192.168.98.22	\N
+84	\N	1	1399375413	\N	Наталия	Смольянина	Алишеровна	miss.smolyanina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_113	1	34	0	2	3	89136231837	\N	\N
+85	\N	1	1399375525	1399819999	Наталия	Смольянина	Алишеровна	Оператор 50	202cb962ac59075b964b07152d234b70	\N	sip_user_112	1	34	0	2	3	89136231837	192.168.98.17	\N
+87	\N	1	1399375866	1400154408	Татьяна	Кавинская	Валериевна	Kavinskaya@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_110	1	34	0	2	1	89088096818	192.168.98.36	\N
+88	\N	1	1399376161	1399376207	Ирина	Касаткина	Владимировна	Kasatkina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_109	1	34	0	2	1	89045859190	192.168.98.38	\N
+89	\N	1	1399380199	1399388127	андрей	надточий	александрович	andrey.nadtochyy@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_108	1	34	0	2	3	89507931214	192.168.98.17	\N
+91	\N	1	1399385543	\N	ольга	зырянова	сергеевна	danya-0703@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_10	1	34	0	2	3	89059434220	\N	\N
+93	\N	1	1399435883	1399474624	Марина	Вдовина	Александровна	vdovina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_99	1	34	0	2	3	89048278282	192.168.98.11	\N
+94	\N	1	1399439847	1400571082	Марина	Лозинская	Сергеевна	lozinskaiaomsk@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_98	1	34	0	2	1	+79507813411	192.168.98.31	\N
+95	\N	1	1399441323	1399896060	Кристина	Елунина	Анатольевна	elunina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_97	1	34	0	2	3	89081167027	192.168.98.63	\N
+96	\N	1	1399442216	1399878678	Людмила	Шумкова	Александровна	lussikotochka@mal.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_96	1	34	0	2	1	89620341101	192.168.98.38	\N
+97	\N	1	1399446276	1400147658	Барсег	Ходерян	Акопович	xoderyan1991@bk.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_95	1	34	0	2	1	89236825955	192.168.98.64	\N
+98	\N	1	1399447400	1399906283	Елена	Фатеева	Владимировна	joli-601@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_94	1	34	0	2	1	89059233875	192.168.98.37	\N
+99	\N	1	1399447607	1400493830	Ольга	Васильева	Александровна	mausik76@list.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_93	1	34	0	2	2	89040783956	192.168.98.30	\N
+100	\N	1	1399460316	1399896060	Ирина	Дьякова	Алексеевна	ira-dyakova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_92	1	34	0	2	3	89236716604	192.168.98.12	\N
+101	\N	1	1399460623	1400511859	Татьяна	Коваленко	Александровна	tanyha_kovalenko@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_91	1	34	0	2	2	+79659845785	192.168.98.24	\N
+102	\N	1	1399460630	1399788134	Касиля	Умбеткалиева	Болатденовна	kasilya92@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_90	1	34	0	2	2	89503387825	192.168.98.38	\N
+103	\N	1	1399460643	\N	Ольга	Подтереб	Евгеньевна	opodtereb@mail.u	202cb962ac59075b964b07152d234b70	\N	sip_user_89	1	34	0	2	2	89514273305	\N	\N
+104	\N	1	1399460655	1400338439	Александра	ваничкина	Александровна	famih.jeka@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_88	1	34	0	2	2	89043224782	192.168.98.19	\N
+105	\N	1	1399460686	1399460701	Карина 	Никделова	Руслановна 	kariglazaya@bk.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_87	1	34	0	2	2	89609808946	192.168.98.14	\N
+106	\N	1	1399460760	1399560720	Юлия	Догнеева	Геннадьевна	dogneewaug@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_86	1	34	0	2	2	89040710312	192.168.98.30	\N
+107	\N	1	1399460764	\N	василина	яковчишен	михайловна	vasilina_2201/mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_85	1	34	0	2	2	89507897309	\N	\N
+108	\N	1	1399461684	1399993485	Наталья	Гущина	Григорьевна	indigo140386@rambler.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_84	1	34	0	2	1	89131424625	192.168.98.32	\N
+109	\N	1	1399461970	1400511237	Артём	Пищемука	Александрович	hirurg-9393@yandex.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_83	1	34	0	2	2	+79136441034	192.168.98.19	\N
+110	\N	1	1399463756	1400248233	анна	асколкова 	сергеевна	askolkova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_82	1	34	0	2	1	89236976242	192.168.98.36	\N
+111	\N	1	1399514965	1400566113	Надежда	Дюба	Михайловна	Dyba@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_81	1	34	0	2	2	89081062364	192.168.98.64	\N
+112	\N	1	1399515569	\N		Жаксылыков		indigoo94@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_80	1	34	0	2	2		\N	\N
+113	\N	1	1399515679	1399533135	Жаслан	Жаксылыков	Шарипович	Zhaslan94	202cb962ac59075b964b07152d234b70	\N	sip_user_8	1	34	0	2	3	89503319425	192.168.98.24	\N
+114	\N	1	1399515880	1399957405	tatyana	kashtanova	alecsandrovna	tatyana@.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_79	1	34	0	2	2	89083157067	192.168.98.64	\N
+115	\N	1	1399515954	1399560705	Оля	Яковлева	Валерьевна	89081004236	202cb962ac59075b964b07152d234b70	\N	sip_user_78	1	34	0	2	2	89081004236	192.168.98.38	\N
+116	\N	1	1399518330	1399532661	Надежда	Дюба	Михайловна	Dyba@mail.ry	202cb962ac59075b964b07152d234b70	\N	sip_user_77	1	34	0	2	2	89081062364	192.168.98.62	\N
+117	\N	1	1399522884	1400494932	Татьяна	Щёголева	Алексеевна	tane4ka220@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_76	1	34	0	2	1	89514019704	192.168.98.24	\N
+118	\N	1	1399525654	1400574234	Владимир	Давыдов	Сергеевич	davydov-vovan2013@yandex.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_75	1	34	0	2	1	79040746939	192.168.98.61	\N
+119	\N	1	1399533397	1400320950	Елена	Андреева	Юрьевна	david@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_74	1	34	0	2	1	89503328307	192.168.98.31	\N
+120	\N	1	1399533440	\N	Самира	Иманова	Атабалаевна	imanova-1974@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_73	1	34	0	2	1	89048263308	\N	\N
+121	\N	1	1399533577	1400233785	Самира	Иманова	Атабалаевна	Samira	202cb962ac59075b964b07152d234b70	\N	sip_user_72	1	34	0	2	1	89048263308	192.168.98.22	\N
+122	\N	1	1399536903	1400219964	Виктория	Таликова	Александровна	talikova	202cb962ac59075b964b07152d234b70	\N	sip_user_71	1	34	0	2	2	89136815155	192.168.98.61	\N
+123	\N	1	1399541459	\N	Марина	Габранова	Александровна	gabranovam@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_70	1	34	0	2	1	89131461417	\N	\N
+124	\N	1	1399542769	1400165370	Марина	Габранова	Александровна	gabranova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_7	1	34	0	2	1	89131461417	192.168.98.27	\N
+125	\N	1	1399546359	1399992647	Макпал	Абаилдина 	Шайкеновна	solnze0203@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_69	1	34	0	2	1	89040763069	192.168.98.64	\N
+126	\N	1	1399546866	1399560460	Анна	Выдрина	Александровна	mirinda28@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_68	1	34	0	2	1	+79620526115	192.168.98.12	\N
+127	\N	1	1399547203	1399547332	Татьяна	Шаронова	Александровна	Sharonova_1993@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_67	1	34	0	2	3	89048217761	192.168.98.28	\N
+128	\N	1	1399547223	1400251637	василина	яковчишен	михайловна	vasilina.22_01@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_66	1	34	0	2	2	89507897309	192.168.98.14	\N
+129	\N	1	1399547242	1399560121	Владислав	Линеинко	Юрьевич	vlad-100.95@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_6	1	34	0	2	3	89509548486	192.168.98.61	\N
+130	\N	1	1399547349	1400338422	Ольга	Подтереб	Евгеньевна	sibatrov.victor@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_5	1	34	0	2	2	89514273305	192.168.98.14	\N
+131	\N	1	1399547426	\N	Долаана	Монгуш	Монгун-ооловна	doli_mongush@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_4	1	34	0	2	1	89236920597	\N	\N
+132	\N	1	1399547700	1400495057	Долаана	Монгуш	Монгун-ооловна	mongush@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_3	1	34	0	2	1	89236920597	192.168.98.31	\N
+133	\N	1	1399548407	1399560794	Елена	Алифиренко	Владиславовна	venera002@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_200	1	34	0	2	2		192.168.98.19	\N
+134	\N	1	1399601430	1400410140	Алма	Танмурзинова	Сембаевна	neite6@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_2	1	34	0	2	2	89514022160	192.168.98.14	\N
+135	\N	1	1399601444	1399787924	Владимир	Понкратьев	Олегович	wazia@rambler.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_199	1	34	0	2	2	89514089058	192.168.98.37	\N
+136	\N	1	1399601753	1399791260	Айгуль	Альбекова	Усербаевна	mrs_albekova	202cb962ac59075b964b07152d234b70	\N	sip_user_198	1	34	0	2	2	89514128830	192.168.98.30	\N
+137	\N	1	1399601907	1400321274	Айгуль	Альбекова	Усербаевна	mrs_albekova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_197	1	34	0	2	2	89514128830	192.168.98.32	\N
+138	\N	1	1399606448	1400410187	Андрей	Глуховченко	Андреевич	andri-murom@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_196	1	34	0	2	1	89081170294	192.168.98.30	\N
+139	\N	1	1399616708	1400424764	Леся	Бакун	Петровна	padapetrova	202cb962ac59075b964b07152d234b70	\N	sip_user_195	1	34	0	2	1	89045803516	192.168.98.31	\N
+140	\N	1	1399618792	1400565479	Ирина	Беляновская	Павловна	irinabelyanovskaya	202cb962ac59075b964b07152d234b70	\N	sip_user_194	1	34	0	2	1	89131472992	192.168.98.36	\N
+141	\N	1	1399621086	\N	Вера	Зайцева	Владимировна	veraz_1960@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_193	1	34	0	2	2	89069183702	\N	\N
+142	\N	1	1399621279	1399633093	Вера	Зайцева 	Владимировна	veraz@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_192	1	34	0	2	2	89069183702	192.168.98.31	\N
+143	\N	1	1399687225	1399716148	Екатерина	Медведева	Евгеньевна	katti_super@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_191	1	34	0	2	1	89083175420	192.168.98.17	\N
+144	\N	1	1399690374	1400320747	Ирина	Молчанова	Александровна	jrotti1@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_190	1	34	0	2	2	89507910617	192.168.98.17	\N
+145	\N	1	1399698815	\N	елена	пушкарева	юрьевна	innaya2@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_189	1	34	0	2	2		\N	\N
+146	\N	1	1399699157	\N	елена	89503353802	юрьевна	innaya2@rambler.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_188	1	34	0	2	2	8950335802	\N	\N
+147	\N	1	1399699207	1399702036	Ерлан	Аралбаев	Хайрулаевич	aralbaev-98@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_187	1	34	0	2	2	89514012707	192.168.98.65	\N
+148	\N	1	1399699292	\N	елена 	пушкарева	юрьевна	innaya22@rambler.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_186	1	34	0	2	2	89503353802	\N	\N
+149	\N	1	1399699800	1399704634	елена	пушкарева	юрьевна	innaya222@rambler.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_185	1	34	0	2	2	89503353802	192.168.98.19	\N
+150	\N	1	1399705334	1399733477	Елена	Андреева	Юрьевна	david@ mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_184	1	34	0	2	1	89503328307	192.168.98.31	\N
+151	\N	1	1399705520	1399798334	Ольга	Липатова	Николаевна	lipatova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_183	1	34	0	2	2	89509561145	192.168.98.38	\N
+152	\N	1	1399705633	1400251695	Таисия	Василенко	Александровна	angelo4uk-94@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_182	1	34	0	2	2	89831137394	192.168.98.34	\N
+153	\N	1	1399708520	\N	Виктор	Соколов	Николаевич	Sokolov	202cb962ac59075b964b07152d234b70	\N	sip_user_181	1	34	0	2	2	89836210896	\N	\N
+154	\N	1	1399708574	1400251387	Анастасия	Рылова	Сергеевна	stasya371@yandex.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_180	1	34	0	2	2	89050964985	192.168.98.19	\N
+155	\N	1	1399708587	1399719201	Виктор	Соколов	Николаевич	Sokolov@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_179	1	34	0	2	2	89836210896	192.168.98.24	\N
+156	\N	1	1399719725	1399721590	Анастасия	Мироненко	Вячеславовна	nastushka_mir95@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_178	1	34	0	2	1	89533990952	192.168.98.37	\N
+157	\N	1	1399719998	1399871637	Надежда	Глухова	Владимировна	gluhovaaa@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_177	1	34	0	2	2	89620516546	192.168.98.24	\N
+158	\N	1	1399776196	\N	Валентина	Баева 	Анатольевна	Baeva@meil.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_176	1	34	0	2	1	89045824130	\N	\N
+159	\N	1	1399777080	1399805534	Карина	Лакурина	Сергеевна	karinalakurina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_175	1	34	0	2	2	89514033287	192.168.98.34	\N
+160	\N	1	1399780736	1399789818	Олеся	Скальская	Евгеньевна	sky.lesya@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_174	1	34	0	2	1	89136895186	192.168.98.65	\N
+161	\N	1	1399892061	1399992682	Ольга	Курченкова	Руслановна	kurchenkova94@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_173	1	34	0	2	1	89087994891	192.168.98.31	\N
+162	\N	1	1399893928	1399893962	сергей	чегодаев	сергеевич	chegodaev@	202cb962ac59075b964b07152d234b70	\N	sip_user_172	1	34	0	2	1		192.168.98.18	\N
+163	\N	1	1399957103	1399961778	Евгения	Сотник	Юрьевна	ms.sotnik@bk.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_171	1	34	0	2	2	89514266672	192.168.98.38	\N
+164	\N	1	1399957115	1400320514	Семен	Поцелуев	Николаевич	sema.pocek	202cb962ac59075b964b07152d234b70	\N	sip_user_170	1	34	0	2	1	89081011898	192.168.98.35	\N
+165	\N	1	1399957212	1400061511	Семен	Поцелуев	Николаевич	sema.pocek@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_169	1	34	0	2	1	89081011898	192.168.98.35	\N
+166	\N	1	1399960701	1400573985	Тарас	Назаренко	Евгеньевич	pevec1090@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_168	1	34	0	2	2	89081026356	192.168.98.63	\N
+167	\N	1	1399975757	1400051431	Августа	Ненянг	Николаевна	avgusta@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_167	1	34	0	2	1	89533961846	192.168.98.25	\N
+168	\N	1	1399975795	1400251541	Татьяна	Пушина	Николаевна	pushina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_166	1	34	0	2	1	89136517446	192.168.98.29	\N
+169	\N	1	1399978559	1400502910	татьяна	карамнова	валентиновна	karamnova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_165	1	34	0	2	2	89050993594	192.168.98.14	\N
+170	\N	1	1399978933	1400165506	Тамара	Башаева	Сергеевна	Tamara@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_164	1	34	0	2	2	89507932201	192.168.98.24	\N
+171	\N	1	1400044692	1400565510	марина	князева	александровна	knyazeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_163	1	34	0	2	2	89139627723	192.168.98.14	\N
+172	\N	1	1400061616	1400504914	Раиса	Кузьменко	Николаевна	raja_kuzmenko@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_162	1	34	0	2	2	89043205042	192.168.98.12	\N
+173	\N	1	1400062412	1400251833	Елена	сафронова	Геннадьевна	12len@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_161	1	34	0	2	2	89659820030	192.168.98.28	\N
+174	\N	1	1400064543	1400066499	Татьяна	Хоряк	Сергеевна	tanechka277@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_160	1	34	0	2	2	89048200802	192.168.98.17	\N
+175	\N	1	1400064612	1400410123	Мария	Елкина 	Сергеевна	maria_yolka@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_159	1	34	0	2	2	89136376564	192.168.98.32	\N
+176	\N	1	1400148107	1400165396	Дарья	Самочернова	Сергеевна	dasha55s02@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_158	1	34	0	2	2	8 953 395 93 13	192.168.98.22	\N
+177	\N	1	1400149954	1400162570	Денис	 Шляхтун	Николаевич	spaun5000D@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_157	1	34	0	2	2	89059416611	192.168.98.14	\N
+178	\N	1	1400149959	1400150015	Эдуард	Пономаренко	Анатольевич	august72@list.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_156	1	34	0	2	2	89835202555	192.168.98.38	\N
+179	\N	1	1400150033	1400158608	Дмитрий	Дмитриев	Витальевич	dimon.dm.ru@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_155	1	34	0	2	2	8960432166	192.168.98.31	\N
+180	\N	1	1400150052	1400165429	Виктория	Баранова 	Алексеевна	Wolf_Baranova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_154	1	34	0	2	2	89507829676	192.168.98.35	\N
+181	\N	1	1400150079	1400251793	Дарья	Домань	Дмитриевна	dashustik-d@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_153	1	34	0	2	2	89131466427	192.168.98.26	\N
+182	\N	1	1400150324	1400565507	галина	климова	андреевна	Galina@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_152	1	34	0	2	2	89048258120	192.168.98.19	\N
+183	\N	1	1400156634	\N	Эмиль	Хилажетдинов	Айратович	gm@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_151	1	34	0	2	1	89236951107	\N	\N
+184	\N	1	1400156831	1400165073	Эмиль	Хилажетдинов	Айратович	mg555@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_150	1	34	0	2	1	89236951107	192.168.98.11	\N
+185	\N	1	1400214766	1400476422	Анастасия	Микуцкая	Александровна	Nastin94_94@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_149	1	34	0	2	2	89507938185	192.168.98.19	\N
+186	\N	1	1400215538	1400234180	Елена	Ена	Петровна	Elena	202cb962ac59075b964b07152d234b70	\N	sip_user_148	1	34	0	2	2	(9831105229	192.168.98.24	\N
+187	\N	1	1400216035	1400568133	Владимир	Звягинцев	Андреевич	dante_spardovich@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_147	1	34	0	2	2	8 9083186527	192.168.98.11	\N
+188	\N	1	1400235122	\N	Валерия	Дигина	Сергеевна	digina.lera@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_146	1	34	0	2	1	89045896102	\N	\N
+189	\N	1	1400235264	1400238236	Анна	Есипова 	Владимировна	davl13anya@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_145	1	34	0	2	1	89081158813	192.168.98.32	\N
+190	\N	1	1400235304	1400251428	Валерия	Дигина	Сергеевна	free-777@inbox.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_144	1	34	0	2	1	89045896102	192.168.98.17	\N
+191	\N	1	1400237225	1400251852	Анатолий	Юрковец	Анатольевич	gtfo_to_mail-ru@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_143	1	34	0	2	2	89136432572	192.168.98.35	\N
+192	\N	1	1400237281	1400493409	Ксения	Попова	Сергеевна	popova@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_142	1	34	0	2	2	89088042683	192.168.98.32	\N
+193	\N	1	1400237288	1400493459	Евгения	Погорелая	Сергеевна	pogorelaya@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_141	1	34	0	2	2	8-923-181-99-92	192.168.98.64	\N
+194	\N	1	1400237289	1400241528	Ксения	Леоненко	Вячеславовна	leonenko@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_140	1	34	0	2	2	89136341437	192.168.98.38	\N
+195	\N	1	1400237385	1400510871	анастасия	кутубаева 	тахтаровна	kutubaeva@mail.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_139	1	34	0	2	2	89659884623	192.168.98.25	\N
+196	\N	1	1400647739	1401441974	123	123	12321	test1	202cb962ac59075b964b07152d234b70	\N	sip_user_38	1	0	0	2	2	123	192.168.98.117	\N
+197	\N	0	1401268129	\N	\N	\N	\N	unknown_user	\N	\N	\N	0	0	0	1	\N	\N	\N	\N
+205	\N	1	1403598637	\N	11	111	11	gilya@list.ru	202cb962ac59075b964b07152d234b70	\N	sip_user_136	1	0	0	2	2	11	\N	\N
+206	\N	1	1403599246	\N	asd	dfas	asd	asdas	202cb962ac59075b964b07152d234b70	\N	sip_user_135	1	0	0	2	2	asd	\N	\N
+214	\N	1	1403600246	\N	12	121	12	qqq111111	698d51a19d8a121ce581499d7b701668	\N	sip_user_36	1	0	0	2	2	12	\N	\N
+215	\N	1	1403600309	1403600322	11	11	1	1111111	6512bd43d9caa6e02c990b0a82652dca	\N	sip_user_31	1	0	0	2	2	1	192.168.98.117	\N
+\.
+
+
+--
+-- Data for Name: providers; Type: TABLE DATA;
+--
+
+COPY "providers" ("id", "title", "company_id", "desc", "created", "modified") FROM stdin;
+1	sipnet	2		1404380231	1404380286
+2	sipnet1	2		1404380289	1404380299
+\.
+
+
+--
+-- Data for Name: tbl_migration; Type: TABLE DATA;
+--
+
+COPY "tbl_migration" ("version", "apply_time", "module") FROM stdin;
+m000000_000000_base_clone	1392884876	clone
+m000000_000000_base_company	1392884876	company
+m000000_000000_base_handlerClass	1393401340	handlerClass
+m000000_000000_base_operator	1392884876	operator
+m000000_000000_base_provider	1404380063	provider
+m130520_065136_operator	1392884876	operator
+m130520_065144_account	1392884876	operator
+m130628_065432_clone_record	1392884876	clone
+m131111_061244_usewebrtc	1392884876	operator
+m131125_071424_operatorAddPassword	1392884876	operator
+m131126_090152_operatorAddPollTemplateId	1392884876	operator
+m131209_033009_notice	1392884876	company
+m131211_085530_emulate	1392884877	operator
+m131212_080327_company	1392884877	company
+m131212_104045_user	1392884877	company
+m131217_073840_addSchedulerActive	1392884877	company
+m131219_075017_user_add_subscribe	1392884877	company
+m131219_090437_addCompanyId	1392884877	operator
+m131226_072634_group	1392884877	company
+m131226_082144_group_users	1392884877	company
+m131227_062728_group_roles	1392884877	company
+m131227_084046_addAdminCompany	1392884877	company
+m140225_024127_handler_classes	1393401340	handlerClass
+m140320_043904_account_server	1395290873	operator
+m140429_023238_company_add_key	1398739413	company
+m140429_025616_operator_add_group	1398740583	operator
+m140505_052116_operators_addphone	1399267469	operator
+m140506_024814_operators_add_ip	1399370408	operator
+m140625_091408_operator_session_id	1403689985	operator
+m140703_091601_providers	1404380228	provider
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA;
+--
+
+COPY "users" ("id", "sort", "published", "created", "modified", "login", "fullname", "phone", "desc", "password", "company_id", "admin", "subscribe", "admin_company") FROM stdin;
+1	\N	1	1392886211	1404440322	cloudkserg11@gmail.com	admin	\N		202cb962ac59075b964b07152d234b70	2	1	1	1
+2	\N	1	1404441385	1404441409	gilya@ixtlan.org	gilya@ixtlan.org	\N		202cb962ac59075b964b07152d234b70	2	1	1	1
+\.
+
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_name_pkey" PRIMARY KEY(name);ALTER TABLE "clone_records" ADD CONSTRAINT "clone_records_id_pkey" PRIMARY KEY(id);ALTER TABLE "companies" ADD CONSTRAINT "companies_id_pkey" PRIMARY KEY(id);
+DROP INDEX IF EXISTS "companies_key" CASCADE;
+CREATE UNIQUE INDEX "companies_key" ON "companies" ("key");ALTER TABLE "group_roles" ADD CONSTRAINT "group_roles_id_pkey" PRIMARY KEY(id);ALTER TABLE "group_users" ADD CONSTRAINT "group_users_id_pkey" PRIMARY KEY(id);ALTER TABLE "groups" ADD CONSTRAINT "groups_id_pkey" PRIMARY KEY(id);ALTER TABLE "handler_classes" ADD CONSTRAINT "handler_classes_class_name_pkey" PRIMARY KEY(class_name);ALTER TABLE "notices" ADD CONSTRAINT "notices_id_pkey" PRIMARY KEY(id);ALTER TABLE "operators" ADD CONSTRAINT "operators_id_pkey" PRIMARY KEY(id);ALTER TABLE "providers" ADD CONSTRAINT "providers_id_pkey" PRIMARY KEY(id);ALTER TABLE "tbl_migration" ADD CONSTRAINT "tbl_migration_version_pkey" PRIMARY KEY(version);ALTER TABLE "users" ADD CONSTRAINT "users_id_pkey" PRIMARY KEY(id);
